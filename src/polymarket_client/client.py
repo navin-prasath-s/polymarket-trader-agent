@@ -1,12 +1,13 @@
 import os
 import time
 from decimal import Decimal
-from typing import Any, Dict, Optional, Iterable
+from typing import Any, Dict, Optional
 
-
+from dotenv import load_dotenv
 import httpx
 
-url = "http://127.0.0.1:8000"
+load_dotenv()
+polymarket_playground_url = os.getenv("POLYMARKET_PLAYGROUND_URL", "http://localhost:8000")
 
 _LEVELS = {"L1": 1, "L2": 2}
 

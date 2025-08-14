@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 
 Handler = Callable[[dict], None]
 
-
+# TODO: Read urls from .env
 
 class EventBus:
     def __init__(self):
