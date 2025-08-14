@@ -24,7 +24,7 @@ class EventBus:
 
 
 class _Handler(BaseHTTPRequestHandler):
-    path_allowed = "/market-event"
+    path_allowed = "/market_event"
     bus: EventBus
 
     def do_POST(self):
@@ -62,7 +62,7 @@ def _make_handler(bus: EventBus, path: str):
 
 
 class WebhookListener:
-    def __init__(self, *, host="0.0.0.0", port=8001, path="/market-event"):
+    def __init__(self, *, host="0.0.0.0", port=8001, path="/market_event"):
         self.host, self.port, self.path = host, port, path
         self.bus = EventBus()
         self._server = None
@@ -116,6 +116,7 @@ class MarketEventHandler(ABC):
             data: Dictionary containing market data as a list
 
         Expected data structure:
+        markets:
         [
             {
                 "condition_id": "abc123",
@@ -137,6 +138,7 @@ class MarketEventHandler(ABC):
             data: Dictionary containing resolution data as a list
 
         Expected data structure:
+        markets:
         [
             {
                 "condition_id": "abc123",
@@ -156,6 +158,7 @@ class MarketEventHandler(ABC):
             data: Dictionary containing payout information as a list
 
         Expected data structure:
+        payout_logs:
         [
             {
                 "user_name": "alice",
