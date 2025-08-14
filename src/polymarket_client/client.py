@@ -106,10 +106,10 @@ class BaseClient:
 
 class Client(BaseClient):
     """
-       Public client.
+       Public polymarket_client.
        Usage:
-           client = Client(url="http://127.0.0.1:8000", allow=("L1","L2"))
-           client.get_health()
+           polymarket_client = Client(url="http://127.0.0.1:8000", allow=("L1","L2"))
+           polymarket_client.get_health()
        """
 
 
