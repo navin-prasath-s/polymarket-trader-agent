@@ -4,20 +4,23 @@ import time
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
-
 import feedparser
 import requests
 
 from src.logger import setup_logging
 
+# Initialize project-wide logging (configured in src.logger)
 logger = setup_logging()
 
+# Shared HTTP session
 _http = requests.Session()
 _http.headers.update({
     "User-Agent": "RSSNewsPoller/1.0 (+https://example.com; contact: you@example.com)"
 })
 DEFAULT_TIMEOUT = float(os.getenv("RSS_TIMEOUT_SECS", "10"))
 
+
+# --------------------------------- Internal Utilities ----------------------------------
 
 def _safe_published(entry) -> Dict[str, Optional[str]]:
     dt_str = getattr(entry, "published", None)
@@ -47,11 +50,87 @@ def make_article_key(entry) -> str:
     return f"tp::{title.strip()}|{published.strip()}"
 
 
+# ---------------------------- Formatting / Transform Helpers ----------------------------
+
+def format_headlines(
+    news_data: Dict[str, List[Dict[str, Any]]],
+    include_summary: bool = False
+) -> str:
+    """
+    Produce a human-readable string of headlines for ALL items passed in.
+    Caller chooses whether to print or not. No printing here.
+    """
+    lines: List[str] = []
+    lines.append("=" * 60)
+    lines.append("LATEST NEWS HEADLINES (NEW ITEMS ONLY)")
+    lines.append("=" * 60)
+
+    for source, articles in news_data.items():
+        lines.append(f"\n{source.upper()}")
+        lines.append("-" * 30)
+        for i, article in enumerate(articles, 1):
+            lines.append(f"{i}. {article['title']}")
+            lines.append(f"   Published: {article.get('published')}")
+            lines.append(f"   Link: {article['link']}")
+            if include_summary:
+                summary = (article.get("summary") or "").strip()
+                if summary:
+                    lines.append(f"   Summary: {summary[:300]}{'...' if len(summary) > 300 else ''}")
+            if article.get("categories"):
+                lines.append(f"   Categories: {', '.join(article['categories'])}")
+    return "\n".join(lines)
+
+def pretty_print(
+    news_data: Dict[str, List[Dict[str, Any]]],
+    include_summary: bool = False
+):
+    """
+    Print formatted headlines to stdout (console pretty print).
+    """
+    print(format_headlines(news_data, include_summary=include_summary))
+
+
+def prepare_records(
+    news_data: Dict[str, List[Dict[str, Any]]],
+    include_summary: bool = False,
+    flatten: bool = True,
+) -> Dict[str, List[Dict[str, Any]]] | List[Dict[str, Any]]:
+    """
+    Prepare a slimmed-down payload for downstream (DB, API, etc).
+    Always includes: title, published. Optionally includes: summary.
+    Uses ALL items passed in; does NOT slice or decide counts.
+    """
+    def _project(article: Dict[str, Any]) -> Dict[str, Any]:
+        rec = {
+            "title": article.get("title"),
+            "published": article.get("published"),
+        }
+        if include_summary:
+            rec["summary"] = article.get("summary")
+        return rec
+
+    projected: Dict[str, List[Dict[str, Any]]] = {
+        source: [_project(a) for a in items]
+        for source, items in news_data.items()
+    }
+
+    if flatten:
+        flat: List[Dict[str, Any]] = []
+        for items in projected.values():
+            flat.extend(items)
+        return flat
+
+    return projected
+
+
+# ------------------------------------- Core Class --------------------------------------
+
 class RSSNewsPoller:
     def __init__(
         self,
         feeds: Optional[Dict[str, str]] = None,
         state_path: Optional[str] = None,
+        max_items_per_feed: int = 10,  # uniform cap requested; feeds may provide fewer
     ):
         self.rss_feeds: Dict[str, str] = feeds or {
             "BBC News": "https://feeds.bbci.co.uk/news/rss.xml",
@@ -63,6 +142,7 @@ class RSSNewsPoller:
         # feed_state: per-source caching hints
         # { source_name: {"etag": str|None, "modified": time.struct_time|None} }
         self.feed_state: Dict[str, Dict[str, Any]] = {}
+        self.max_items_per_feed = max_items_per_feed
 
         if self.state_path and os.path.exists(self.state_path):
             self._load_state()
@@ -73,7 +153,7 @@ class RSSNewsPoller:
             with open(self.state_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
             self.seen_keys = set(data.get("seen_keys", []))
-            # `modified` can’t be stored as struct_time; store as ISO and parse lazily (optional)
+            # For simplicity on reload: persist etag only; modified re-learned later.
             self.feed_state = {k: {"etag": v.get("etag"), "modified": None}
                                for k, v in data.get("feed_state", {}).items()}
             logger.info(f"Loaded state from {self.state_path}: {len(self.seen_keys)} seen keys")
@@ -94,7 +174,6 @@ class RSSNewsPoller:
             os.replace(tmp, self.state_path)
         except Exception as e:
             logger.warning(f"Failed to save state to {self.state_path}: {e}")
-
 
     # ---------- fetching ----------
     def _parse_with_cache(self, source_name: str, feed_url: str):
@@ -133,22 +212,26 @@ class RSSNewsPoller:
             feed = self._parse_with_cache(source_name, feed_url)
 
             if getattr(feed, "status", None) == 304:
-                # Not modified — nothing new
                 logger.info(f"{source_name}: 304 Not Modified (cached)")
                 return []
 
             if getattr(feed, "bozo", False):
                 logger.warning(f"Feed bozo flag set for {source_name} (may have parsing issues)")
 
+            entries = list(getattr(feed, "entries", []))
+            available = len(entries)
+            if available < self.max_items_per_feed:
+                logger.info(f"{source_name}: only {available} items available (requested {self.max_items_per_feed})")
+
             articles: List[Dict[str, Any]] = []
-            for entry in getattr(feed, "entries", [])[:20]:  # slightly higher cap
+            for entry in entries[: self.max_items_per_feed]:
                 pub = _safe_published(entry)
                 categories = [
                     getattr(tag, "term", None) or str(tag)
                     for tag in (getattr(entry, "tags", []) or [])
                 ]
                 article = {
-                    "key": make_article_key(entry),  # <-- fingerprint here
+                    "key": make_article_key(entry),
                     "source": source_name,
                     "title": getattr(entry, "title", None) or "No title",
                     "link": getattr(entry, "link", None) or "No link",
@@ -162,7 +245,6 @@ class RSSNewsPoller:
             # Optional: sort newest first if ISO available
             articles.sort(key=lambda a: a.get("published_iso") or "", reverse=True)
             return articles
-
         except Exception as e:
             logger.error(f"Error fetching feed from {source_name}: {e}", exc_info=True)
             return []
@@ -171,6 +253,7 @@ class RSSNewsPoller:
     def poll_all_feeds(self) -> Dict[str, List[Dict[str, Any]]]:
         """
         Poll all RSS feeds and return ONLY NEW (de-duplicated) articles per source.
+        No printing inside this function.
         """
         logger.info(f"Polling RSS feeds at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         all_new: Dict[str, List[Dict[str, Any]]] = {}
@@ -195,51 +278,22 @@ class RSSNewsPoller:
         self._save_state()
         return all_new
 
-    # ---------- display ----------
-    def display_latest_headlines(
-        self,
-        news_data: Dict[str, List[Dict[str, Any]]],
-        max_per_source: int = 5,
-        verbose: bool = False,
-    ):
-        """
-        Display (pretty-print) the provided news_data (assumed de-duped).
-        If verbose=True, also prints article summary and categories.
-        """
-        lines = []
-        lines.append("\n" + "=" * 60)
-        lines.append("LATEST NEWS HEADLINES (NEW ITEMS ONLY)")
-        lines.append("=" * 60)
-
-        for source, articles in news_data.items():
-            lines.append(f"\n{source.upper()}")
-            lines.append("-" * 30)
-            for i, article in enumerate(articles[:max_per_source], 1):
-                lines.append(f"{i}. {article['title']}")
-                lines.append(f"   Published: {article.get('published')}")
-                lines.append(f"   Link: {article['link']}")
-
-                if verbose:
-                    # print summary and categories if available
-                    summary = (article.get("summary") or "").strip()
-                    if summary:
-                        lines.append(f"   Summary: {summary[:300]}{'...' if len(summary) > 300 else ''}")
-                    if article.get("categories"):
-                        lines.append(f"   Categories: {', '.join(article['categories'])}")
-                lines.append("")
-        print("\n".join(lines))
-
     # ---------- loops ----------
-    def run_continuous_polling(self, interval_minutes: int = 30):
+    def run_continuous_polling(self, interval_minutes: int = 30, on_batch=None):
         """
-        Run continuous polling with specified interval (deduped between cycles).
+        Continuous polling with no printing. If `on_batch` is provided, it's called
+        as `on_batch(new_data)` each cycle for DB writes, webhooks, etc.
         """
-        logger.info(f"Starting RSS news polling (interval: {interval_minutes} minutes). Press Ctrl+C to stop.")
+        logger.info(f"Starting RSS polling (interval: {interval_minutes}m). Ctrl+C to stop.")
         try:
             while True:
                 new_data = self.poll_all_feeds()
-                self.display_latest_headlines(new_data)
-                logger.info(f"Waiting {interval_minutes} minutes until next poll...")
+                if on_batch is not None:
+                    try:
+                        on_batch(new_data)
+                    except Exception as e:
+                        logger.warning(f"on_batch failed: {e}", exc_info=True)
+                logger.info(f"Sleeping {interval_minutes} minutes...")
                 time.sleep(interval_minutes * 60)
         except KeyboardInterrupt:
             logger.info("Polling stopped by user")
@@ -247,19 +301,30 @@ class RSSNewsPoller:
     def single_poll(self) -> Dict[str, List[Dict[str, Any]]]:
         """
         Perform a single poll of all feeds and return ONLY NEW articles.
+        No printing here.
         """
-        new_data = self.poll_all_feeds()
-        self.display_latest_headlines(new_data)
-        return new_data
+        return self.poll_all_feeds()
 
+
+
+
+# ------------------------------------- CLI Example -------------------------------------
 
 if __name__ == "__main__":
-    # Example usage with persistence so duplicates are suppressed across restarts
-    poller = RSSNewsPoller(state_path="rss_poller_state.json")
+    # Enforce a uniform cap; if a feed provides fewer, you'll see a log line.
+    poller = RSSNewsPoller(state_path="rss_poller_state.json", max_items_per_feed=10)
 
-
-    # Option 2: Single poll (returns only unseen items)
     new_data = poller.single_poll()
 
-    # Option 3: Continuous polling
-    # poller.run_continuous_polling(interval_minutes=15)
+    pretty_print(new_data, include_summary=False)
+
+    # Minimal downstream records: title + published (no summary), for ALL items fetched
+    records = prepare_records(new_data, include_summary=False, flatten=True)
+    print(records)
+
+    # If you want title + published + summary:
+    # records_with_summary = prepare_records(new_data, include_summary=True, flatten=True)
+    # print(records_with_summary)
+
+    # If you want a human preview:
+    # print(format_headlines(new_data, include_summary=False))

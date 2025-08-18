@@ -1,0 +1,32 @@
+{
+  "seen_keys": [
+    "id::https://www.bbc.com/news/articles/c1jnen9zklpo#0",
+    "id::https://www.bbc.com/news/articles/c30z17376ego#0",
+    "id::https://www.bbc.com/news/articles/ce93y2dxlg4o#0",
+    "id::https://www.bbc.com/news/articles/ce93ygv4zzlo#0",
+    "id::https://www.bbc.com/news/articles/ckglxlx5vldo#0",
+    "id::https://www.bbc.com/news/articles/cm2kzrr4375o#0",
+    "id::https://www.bbc.com/news/articles/cp94jz0y7ygo#0",
+    "id::https://www.bbc.com/news/articles/cx2px5r90x4o#0",
+    "id::https://www.bbc.com/news/articles/cz60nyp3714o#1",
+    "id::https://www.bbc.com/news/articles/czd0qlmjl05o#0",
+    "id::https://www.npr.org/2025/08/17/g-s1-83183/putin-trump-ceasefire",
+    "id::https://www.npr.org/2025/08/17/g-s1-83196/national-guard-armed-washington-dc",
+    "id::https://www.npr.org/2025/08/17/nx-s1-5505319/european-leaders-zelenskyy-trump",
+    "id::https://www.npr.org/2025/08/17/nx-s1-5505324/hurricane-erin",
+    "id::https://www.npr.org/2025/08/17/nx-s1-5505416/air-canada-suspends-restart-plans",
+    "id::https://www.npr.org/2025/08/18/nx-s1-5503741/three-innovations-pushing-the-medical-field-forward",
+    "id::https://www.npr.org/2025/08/18/nx-s1-5505466/actor-terence-stamp-dies",
+    "id::https://www.npr.org/2025/08/18/nx-s1-5505907/bolivia-presidential-election-runoff",
+    "id::https://www.npr.org/2025/08/18/nx-s1-5505909/pakistan-defends-flood-response-hundreds-killed",
+    "id::https://www.npr.org/sections/goats-and-soda/2025/08/17/g-s1-82000/neurosurgeon-neurosurgery-sierra-leone"
+  ],
+  "feed_state": {
+    "BBC News": {
+      "etag": null
+    },
+    "NPR": {
+      "etag": null
+    }
+  }
+}
