@@ -27,6 +27,7 @@ def generate_uuid(string: str) -> str:
 
 class QdrantHandler(MarketEventHandler):
     def on_market_added(self, data: dict) -> None:
+        logger.info(f"on_market_added called with data: {data}")
 
         markets = data.get("markets", [])
         for market in markets:
@@ -49,6 +50,7 @@ class QdrantHandler(MarketEventHandler):
 
 
     def on_market_resolved(self, data: dict) -> None:
+        logger.info(f"on_market_resolved called with data: {data}")
         markets = data.get("markets", [])
 
         if markets:
