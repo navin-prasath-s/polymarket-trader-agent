@@ -1,10 +1,10 @@
 from uuid import uuid5, NAMESPACE_URL
 
-from qdrant_client import QdrantClient
+from qdrant_client import QdrantClient, models
 import os
 from dotenv import load_dotenv
 
-from src.logger import logger
+from src.logger import setup_logging
 from src.polymarket_client.webhook_listener import WebhookListener, MarketEventHandler
 from src.models import embedding_model
 
@@ -13,6 +13,8 @@ load_dotenv()
 client = QdrantClient(url=os.getenv("QDRANT_URL", "http://localhost:6333"))
 collection_name = "markets"
 
+
+logger = setup_logging()
 
 
 def generate_uuid(string: str) -> str:
@@ -47,7 +49,19 @@ class QdrantHandler(MarketEventHandler):
 
 
     def on_market_resolved(self, data: dict) -> None:
-        pass
+        markets = data.get("markets", [])
+
+        if markets:
+            point_ids = [generate_uuid(market["condition_id"]) for market in markets]
+            client.delete(
+                collection_name=collection_name,
+                points_selector=models.PointIdsList(points=point_ids),
+                wait=True,
+            )
+
+        logger.info(f"markets_resolved: {len(markets)}")
+
+
 
     def on_payout_logs(self, data: dict) -> None:
         pass
