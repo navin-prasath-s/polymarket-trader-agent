@@ -1,0 +1,32 @@
+{
+  "seen_keys": [
+    "id::https://www.bbc.com/news/articles/c20662dxl88o#0",
+    "id::https://www.bbc.com/news/articles/c4g64qedynlo#0",
+    "id::https://www.bbc.com/news/articles/c620l3y7ydro#0",
+    "id::https://www.bbc.com/news/articles/c754k7d0z51o#0",
+    "id::https://www.bbc.com/news/articles/ce934e9gyryo#0",
+    "id::https://www.bbc.com/news/articles/clyr7l0z9edo#0",
+    "id::https://www.bbc.com/news/articles/cp8z4nj17dno#0",
+    "id::https://www.bbc.com/news/articles/cwy0j9n4qzwo#0",
+    "id::https://www.bbc.com/news/articles/cx23g97vk9mo#0",
+    "id::https://www.bbc.com/news/articles/cy081prg9jjo#0",
+    "id::https://www.npr.org/2025/08/20/g-s1-77081/dubai-airport-layovers",
+    "id::https://www.npr.org/2025/08/20/g-s1-83950/national-guard-dc-crash",
+    "id::https://www.npr.org/2025/08/20/nx-s1-5496668/some-florida-farmers-reduce-crops-as-deportation-fears-drive-workers-away",
+    "id::https://www.npr.org/2025/08/20/nx-s1-5502697/dependent-on-foreign-sales-u-s-wheat-farmers-hoping-longtime-partners-stick-with-them",
+    "id::https://www.npr.org/2025/08/20/nx-s1-5507021/how-attorney-general-pam-bondi-has-reshaped-the-justice-department-to-suit-trump",
+    "id::https://www.npr.org/2025/08/20/nx-s1-5507202/health-innovations-play-a-role-in-improving-living-standards-and-the-economy",
+    "id::https://www.npr.org/2025/08/20/nx-s1-5508084/hurricane-erin-outer-banks-east-coast-rip-currents",
+    "id::https://www.npr.org/2025/08/20/nx-s1-5508134/trump-museums-smithsonian-woke-law",
+    "id::https://www.npr.org/2025/08/20/nx-s1-5508276/trump-calls-for-resignation-of-fed-governor-in-latest-line-of-attack",
+    "id::https://www.npr.org/2025/08/20/nx-s1-5508633/drc-rwanda-hrw-trump"
+  ],
+  "feed_state": {
+    "BBC News": {
+      "etag": null
+    },
+    "NPR": {
+      "etag": null
+    }
+  }
+}

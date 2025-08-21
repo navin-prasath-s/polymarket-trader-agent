@@ -9,206 +9,200 @@ from src.models import embedding_model
 from src.news_rss import RSSNewsPoller
 
 load_dotenv()
-logger = setup_logging()
-
-# Qdrant client setup
-client = QdrantClient(url=os.getenv("QDRANT_URL", "http://127.0.0.1:6333"))
-collection_name = "markets"
 
 
-def generate_uuid(string: str) -> str:
+class NewsMarketMatcher:
     """
-    Generate a UUID based on a string using the NAMESPACE_URL namespace.
+    Class to handle news article fetching and market matching using vector similarity.
     """
-    return str(uuid5(NAMESPACE_URL, string))
 
+    def __init__(self,
+                 qdrant_url: str = None,
+                 collection_name: str = "markets"):
+        """
+        Initialize the NewsMarketMatcher.
 
-def find_similar_markets(article: Dict[str, Any], top_k: int = 5) -> List[Dict[str, Any]]:
-    """
-    Find the top k most similar markets for a given news article.
+        Args:
+            qdrant_url: Qdrant database URL
+            collection_name: Name of the collection in Qdrant
+        """
+        self.logger = setup_logging()
+        self.collection_name = collection_name
 
-    Args:
-        article: Dictionary containing article data with 'title' and 'summary'
-        top_k: Number of similar markets to return
+        # Initialize Qdrant client
+        url = qdrant_url or os.getenv("QDRANT_URL", "http://127.0.0.1:6333")
+        self.client = QdrantClient(url=url)
 
-    Returns:
-        List of similar markets with their scores
-    """
-    try:
-        # Combine article title and summary for embedding
-        article_text = f"{article.get('title', '')} {article.get('summary', '')}"
+    def generate_uuid(self, string: str) -> str:
+        """
+        Generate a UUID based on a string using the NAMESPACE_URL namespace.
+        """
+        return str(uuid5(NAMESPACE_URL, string))
 
-        # Generate embedding for the article
-        article_vector = next(embedding_model.embed([article_text]))
+    def find_similar_markets(self, article: Dict[str, Any], top_k: int = 5) -> List[Dict[str, Any]]:
+        """
+        Find the top k most similar markets for a given news article.
 
-        # Search for similar markets in Qdrant
-        search_results = client.query_points(
-            collection_name=collection_name,
-            query=article_vector,
-            limit=top_k,
-            with_payload=True
-        ).points
+        Args:
+            article: Dictionary containing article data with 'title' and 'summary'
+            top_k: Number of similar markets to return
 
-        # Format results
-        similar_markets = []
-        for result in search_results:
-            market_data = {
-                "condition_id": result.payload.get("condition_id"),
-                "question": result.payload.get("question"),
-                "description": result.payload.get("description"),
-                "similarity_score": result.score,
-                "tokens": result.payload.get("tokens", [])
-            }
-            similar_markets.append(market_data)
+        Returns:
+            List of similar markets with their scores
+        """
+        try:
+            # Combine article title and summary for embedding
+            article_text = f"{article.get('title', '')} {article.get('summary', '')}"
 
-        return similar_markets
+            # Generate embedding for the article
+            article_vector = next(embedding_model.embed([article_text]))
 
-    except Exception as e:
-        logger.error(f"Error finding similar markets for article '{article.get('title', 'Unknown')}': {e}")
-        return []
+            # Search for similar markets in Qdrant
+            search_results = self.client.query_points(
+                collection_name=self.collection_name,
+                query=article_vector,
+                limit=top_k,
+                with_payload=True
+            ).points
 
+            # Format results
+            similar_markets = []
+            for result in search_results:
+                market_data = {
+                    "condition_id": result.payload.get("condition_id"),
+                    "question": result.payload.get("question"),
+                    "description": result.payload.get("description"),
+                    "similarity_score": result.score,
+                    "tokens": result.payload.get("tokens", [])
+                }
+                similar_markets.append(market_data)
 
-def process_news_articles(
-        news_data: Dict[str, List[Dict[str, Any]]],
-        top_k: int = 5
-) -> Dict[str, List[Tuple[Dict[str, Any], List[Dict[str, Any]]]]]:
-    """
-    Process all news articles and find similar markets for each.
+            return similar_markets
 
-    Args:
-        news_data: Dictionary with source names as keys and lists of articles as values
-        top_k: Number of similar markets to find for each article
+        except Exception as e:
+            self.logger.error(f"Error finding similar markets for article '{article.get('title', 'Unknown')}': {e}")
+            return []
 
-    Returns:
-        Dictionary mapping source names to lists of (article, similar_markets) tuples
-    """
-    results = {}
+    def process_news_articles(self,
+                              news_data: Dict[str, List[Dict[str, Any]]],
+                              top_k: int = 5
+                              ) -> Dict[str, List[Tuple[Dict[str, Any], List[Dict[str, Any]]]]]:
+        """
+        Process all news articles and find similar markets for each.
 
-    for source_name, articles in news_data.items():
-        source_results = []
+        Args:
+            news_data: Dictionary with source names as keys and lists of articles as values
+            top_k: Number of similar markets to find for each article
 
-        for article in articles:
-            similar_markets = find_similar_markets(article, top_k)
-            source_results.append((article, similar_markets))
+        Returns:
+            Dictionary mapping source names to lists of (article, similar_markets) tuples
+        """
+        results = {}
 
-        results[source_name] = source_results
+        for source_name, articles in news_data.items():
+            source_results = []
 
-    return results
+            for article in articles:
+                similar_markets = self.find_similar_markets(article, top_k)
+                source_results.append((article, similar_markets))
 
+            results[source_name] = source_results
 
-def format_results(
-        results: Dict[str, List[Tuple[Dict[str, Any], List[Dict[str, Any]]]]]
-) -> str:
-    """
-    Format the news-market matching results for display.
+        return results
 
-    Args:
-        results: Dictionary of news articles and their matching markets
+    def fetch_news_and_match_markets(self,
+                                     rss_feeds: Dict[str, str] = None,
+                                     state_path: str = "rss_poller_state.json",
+                                     max_items_per_feed: int = 10,
+                                     top_k_markets: int = 5
+                                     ) -> Dict[str, List[Tuple[Dict[str, Any], List[Dict[str, Any]]]]]:
+        """
+        Main function to run news polling and market matching.
 
-    Returns:
-        Formatted string for display
-    """
-    lines = []
-    lines.append("=" * 80)
-    lines.append("NEWS ARTICLES & MATCHING PREDICTION MARKETS")
-    lines.append("=" * 80)
+        Args:
+            rss_feeds: Dictionary of RSS feed sources and URLs
+            state_path: Path to store RSS polling state
+            max_items_per_feed: Maximum items to fetch per RSS feed
+            top_k_markets: Number of similar markets to find per article
 
-    total_articles = sum(len(articles) for articles in results.values())
-    if total_articles == 0:
-        lines.append("\nNo new articles found.")
-        return "\n".join(lines)
-
-    for source_name, article_market_pairs in results.items():
-        if not article_market_pairs:
-            continue
-
-        lines.append(f"\n{source_name.upper()}")
-        lines.append("=" * len(source_name))
-
-        for i, (article, markets) in enumerate(article_market_pairs, 1):
-            lines.append(f"\n[{i}] NEWS ARTICLE:")
-            lines.append(f"Title: {article.get('title', 'No title')}")
-
-            if markets:
-                lines.append(f"\nTOP MATCHING MARKETS:")
-                for j, market in enumerate(markets, 1):
-                    score_pct = market.get('similarity_score', 0) * 100
-                    lines.append(f"      {j}. [{score_pct:.1f}%] {market.get('question', 'No question')}")
-            else:
-                lines.append(f"\n    No matching markets found.")
-
-            lines.append("-" * 60)
-
-    return "\n".join(lines)
-
-
-def run_news_market_matching(
-        rss_feeds: Dict[str, str] = None,
-        state_path: str = "rss_poller_state.json",
-        max_items_per_feed: int = 10,
-        top_k_markets: int = 5
-) -> Dict[str, List[Tuple[Dict[str, Any], List[Dict[str, Any]]]]]:
-    """
-    Main function to run news polling and market matching.
-
-    Args:
-        rss_feeds: Dictionary of RSS feed sources and URLs
-        state_path: Path to store RSS polling state
-        max_items_per_feed: Maximum items to fetch per RSS feed
-        top_k_markets: Number of similar markets to find per article
-
-    Returns:
-        Dictionary of processed results
-    """
-    # Initialize RSS poller
-    poller = RSSNewsPoller(
-        feeds=rss_feeds,
-        state_path=state_path,
-        max_items_per_feed=max_items_per_feed
-    )
-
-    # Fetch new articles
-    logger.info("Fetching new RSS articles...")
-    news_data = poller.single_poll()
-
-    # Process articles to find matching markets
-    logger.info("Finding matching prediction markets...")
-    results = process_news_articles(news_data, top_k_markets)
-
-    return results
-
-
-if __name__ == "__main__":
-    # Default RSS feeds (you can customize these)
-    default_feeds = {
-        "BBC News": "https://feeds.bbci.co.uk/news/rss.xml",
-        "NPR": "https://feeds.npr.org/1001/rss.xml",
-        # "Reuters": "https://feeds.reuters.com/reuters/topNews",
-        # "AP News": "https://feeds.apnews.com/rss/apf-topnews",
-    }
-
-    try:
-        # Run the matching process
-        results = run_news_market_matching(
-            rss_feeds=default_feeds,
-            state_path="rss_poller_state.json",
-            max_items_per_feed=10,
-            top_k_markets=5
+        Returns:
+            Dictionary of processed results
+        """
+        # Initialize RSS poller
+        poller = RSSNewsPoller(
+            feeds=rss_feeds,
+            state_path=state_path,
+            max_items_per_feed=max_items_per_feed
         )
 
-        # Format and print results
-        formatted_output = format_results(results)
-        print(formatted_output)
+        # Fetch new articles
+        self.logger.info("Fetching new RSS articles...")
+        news_data = poller.single_poll()
 
-        # Print summary statistics
+        # Process articles to find matching markets
+        self.logger.info("Finding matching prediction markets...")
+        results = self.process_news_articles(news_data, top_k_markets)
+
+        return results
+
+    @staticmethod
+    def format_results(results: Dict[str, List[Tuple[Dict[str, Any], List[Dict[str, Any]]]]],
+                       llm_results: Dict[str, Dict[str, str]] = None) -> str:
+        """
+        Format the news-market matching results for display.
+
+        Args:
+            results: Dictionary of news articles and their matching markets
+            llm_results: Dictionary of LLM results for each article-market pair
+
+        Returns:
+            Formatted string for display
+        """
+        lines = []
+        lines.append("=" * 80)
+        lines.append("NEWS ARTICLES & MATCHING PREDICTION MARKETS")
+        lines.append("=" * 80)
+
         total_articles = sum(len(articles) for articles in results.values())
-        sources_with_articles = sum(1 for articles in results.values() if articles)
+        if total_articles == 0:
+            lines.append("\nNo new articles found.")
+            return "\n".join(lines)
 
-        print(f"\nSUMMARY:")
-        print(f"Sources checked: {len(results)}")
-        print(f"Sources with new articles: {sources_with_articles}")
-        print(f"Total new articles: {total_articles}")
+        for source_name, article_market_pairs in results.items():
+            if not article_market_pairs:
+                continue
 
-    except Exception as e:
-        logger.error(f"Error in main execution: {e}", exc_info=True)
-        print(f"Error occurred: {e}")
+            lines.append(f"\n{source_name.upper()}")
+            lines.append("=" * len(source_name))
+
+            for i, (article, markets) in enumerate(article_market_pairs, 1):
+                lines.append(f"\n[{i}] NEWS ARTICLE:")
+                lines.append(f"Title: {article.get('title', 'No title')}")
+
+                if markets:
+                    lines.append(f"\nTOP MATCHING MARKETS:")
+                    for j, market in enumerate(markets, 1):
+                        score_pct = market.get('similarity_score', 0) * 100
+                        market_question = market.get('question', 'No question')
+
+                        # Get LLM result if available
+                        article_title = article.get('title', 'No title')
+                        llm_key = f"{article_title}_{market_question}"
+                        llm_result = ""
+
+                        if llm_results and llm_key in llm_results:
+                            llm_status = llm_results[llm_key]
+                            if llm_status == 'yes':
+                                llm_result = " [LLM:RELATED]"
+                            elif llm_status == 'no':
+                                llm_result = " [LLM:NOT RELATED]"
+                            else:
+                                llm_result = f" [LLM:{llm_status.upper()}]"
+
+                        lines.append(f"      {j}. [{score_pct:.1f}%] {market_question}{llm_result}")
+                else:
+                    lines.append(f"\n    No matching markets found.")
+
+                lines.append("-" * 60)
+
+        return "\n".join(lines)
