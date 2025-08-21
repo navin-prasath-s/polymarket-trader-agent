@@ -1,6 +1,9 @@
+import logging
 from pathlib import Path
 
 from fastembed import TextEmbedding
+
+logger = logging.getLogger(__name__)
 
 project_root = Path(__file__).resolve().parent.parent
 cache_dir = project_root / "models"

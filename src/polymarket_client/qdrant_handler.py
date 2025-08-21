@@ -10,11 +10,11 @@ from src.models import embedding_model
 
 
 load_dotenv()
+logger = setup_logging()
+
 client = QdrantClient(url=os.getenv("QDRANT_URL", "http://localhost:6333"))
 collection_name = "markets"
 
-
-logger = setup_logging()
 
 
 def generate_uuid(string: str) -> str:
@@ -24,15 +24,25 @@ def generate_uuid(string: str) -> str:
     return str(uuid5(NAMESPACE_URL, string))
 
 
-
 class QdrantHandler(MarketEventHandler):
-    def on_market_added(self, data: dict) -> None:
-        logger.info(f"on_market_added called with data: {data}")
+    def __init__(self, max_markets: int = None):
+        self.max_markets = max_markets
 
+    def on_market_added(self, data: dict) -> None:
         markets = data.get("markets", [])
+
+        # Limit to first N markets if max_markets is specified
+        if self.max_markets is not None:
+            markets = markets[:self.max_markets]
+
+        print(f"on_market_added called with data: {len(markets)}")
+
         for market in markets:
-            combined_text = f"{market['question']} {market['description']}"
-            vector = next(embedding_model.embed([combined_text]))
+            embeddings = list(embedding_model.embed([market['question']]))
+            if not embeddings:
+                logger.error(f"No embedding generated for market {market['condition_id']}")
+                continue
+            vector = embeddings[0]
             point = {
                 "id": generate_uuid(market["condition_id"]),
                 "vector": vector,
@@ -40,19 +50,15 @@ class QdrantHandler(MarketEventHandler):
                     "condition_id": market["condition_id"],
                     "question": market["question"],
                     "description": market["description"],
-                    "text": combined_text,
                     "tokens": market["tokens"],
                 },
             }
             client.upsert(collection_name, points=[point])
-
-        logger.info(f"markets_added: {len(markets)}")
-
+        print(f"markets_added: {len(markets)}")
 
     def on_market_resolved(self, data: dict) -> None:
-        logger.info(f"on_market_resolved called with data: {data}")
         markets = data.get("markets", [])
-
+        print(f"on_market_resolved called with data: {len(markets)}")
         if markets:
             point_ids = [generate_uuid(market["condition_id"]) for market in markets]
             client.delete(
@@ -60,16 +66,13 @@ class QdrantHandler(MarketEventHandler):
                 points_selector=models.PointIdsList(points=point_ids),
                 wait=True,
             )
-
-        logger.info(f"markets_resolved: {len(markets)}")
-
-
+        print(f"markets_resolved: {len(markets)}")
 
     def on_payout_logs(self, data: dict) -> None:
         pass
 
 
-handler = QdrantHandler()
+handler = QdrantHandler(max_markets=50)
 wl = WebhookListener(port=8001, path="/market_event")
 wl.set_handler(handler)
 

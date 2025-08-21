@@ -12,7 +12,7 @@ load_dotenv()
 logger = setup_logging()
 
 # Qdrant client setup
-client = QdrantClient(url=os.getenv("QDRANT_URL", "http://localhost:6333"))
+client = QdrantClient(url=os.getenv("QDRANT_URL", "http://127.0.0.1:6333"))
 collection_name = "markets"
 
 
@@ -128,8 +128,6 @@ def format_results(
         for i, (article, markets) in enumerate(article_market_pairs, 1):
             lines.append(f"\n[{i}] NEWS ARTICLE:")
             lines.append(f"    Title: {article.get('title', 'No title')}")
-            lines.append(f"    Published: {article.get('published', 'No date')}")
-            lines.append(f"    Link: {article.get('link', 'No link')}")
 
             if markets:
                 lines.append(f"\n    TOP MATCHING MARKETS:")
@@ -141,9 +139,6 @@ def format_results(
                         if len(market['description']) > 150:
                             desc += "..."
                         lines.append(f"         Description: {desc}")
-                    if market.get('tokens'):
-                        token_names = [token.get('token_name', 'Unknown') for token in market['tokens']]
-                        lines.append(f"         Tokens: {', '.join(token_names)}")
             else:
                 lines.append(f"\n    No matching markets found.")
 

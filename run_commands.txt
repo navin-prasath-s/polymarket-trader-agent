@@ -2,3 +2,8 @@ docker run -d -p 8000:8000 -v "D:\projects\polymarket-trader\db\playground":/app
 
 
 docker run -d -p 6333:6333 -p 6334:6334 -e QDRANT__LOG_LEVEL=WARNING -v "D:\projects\polymarket-trader\db\qdrant":/qdrant/storage qdrant/qdrant:latest
+
+
+
+
+
