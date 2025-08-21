@@ -127,18 +127,13 @@ def format_results(
 
         for i, (article, markets) in enumerate(article_market_pairs, 1):
             lines.append(f"\n[{i}] NEWS ARTICLE:")
-            lines.append(f"    Title: {article.get('title', 'No title')}")
+            lines.append(f"Title: {article.get('title', 'No title')}")
 
             if markets:
-                lines.append(f"\n    TOP MATCHING MARKETS:")
+                lines.append(f"\nTOP MATCHING MARKETS:")
                 for j, market in enumerate(markets, 1):
                     score_pct = market.get('similarity_score', 0) * 100
                     lines.append(f"      {j}. [{score_pct:.1f}%] {market.get('question', 'No question')}")
-                    if market.get('description'):
-                        desc = market['description'][:150]
-                        if len(market['description']) > 150:
-                            desc += "..."
-                        lines.append(f"         Description: {desc}")
             else:
                 lines.append(f"\n    No matching markets found.")
 
