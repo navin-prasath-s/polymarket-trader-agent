@@ -1,11 +1,19 @@
+import json
 import logging
+import os
 from pathlib import Path
 import re
 
+from dotenv import load_dotenv
 from fastembed import TextEmbedding
 import ollama
+import openai
+
+from src.get_polymarket_data import fetch_and_extract
 
 logger = logging.getLogger(__name__)
+load_dotenv()
+
 
 project_root = Path(__file__).resolve().parent.parent
 cache_dir = project_root / "models"
@@ -14,6 +22,7 @@ cache_dir = project_root / "models"
 embedding_model_name = "BAAI/bge-base-en-v1.5"
 embedding_model = TextEmbedding(embedding_model_name,
                                 cache_dir=str(cache_dir))
+
 
 prompt_asking_if_related = """You are a strict financial analyst. You will be given a news article and a polymarket question.
 Your task is to determine if the news article will have any DIRECT impact on the market outcome.
@@ -40,7 +49,6 @@ STRICT RULES:
 
 Default to NO IMPACT unless there is a clear, direct connection.
 Only answer "yes" or "no"."""
-
 
 def ask_llm_if_related(question):
     try:
@@ -75,43 +83,110 @@ def ask_llm_if_related(question):
     except Exception as e:
         return f"Error: {e}"
 
-if __name__ == "__main__":
-    # Example 1 - Should have impact
-    test1 = """
-    News: Apple reports iPhone sales down 10% in China amid increasing competition from local brands like Huawei and Xiaomi.
 
-    Market: Will Apple's revenue from China be below $15 billion in Q4 2024?
+
+client = openai.OpenAI(
+    api_key=os.getenv("OPENAI_API_KEY"),  # or leave blank if env var is set
+)
+
+functions = [
+    {
+        "name": "report_market_direction",
+        "description": (
+            "Provide market decision: 'undecided' or chosen outcome with direction."
+        ),
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "decision": {
+                    "type": "string",
+                    "enum": ["undecided", "decided"]
+                },
+                "option": {
+                    "type": "string",
+                    "description": "Chosen outcome, e.g., Yes, Team A"
+                },
+                "direction": {
+                    "type": "string",
+                    "enum": ["increase", "decrease"],
+                    "description": "Expected price movement"
+                }
+            },
+            "required": ["decision"]
+        }
+    }
+]
+
+def ask_direction_with_function(payload: dict, user_prompt: str) -> dict:
     """
-
-    # Example 2 - Should have no impact
-    test2 = """
-    News: NASA successfully launches new Mars rover mission, expected to land in February 2025.
-
-    Market: Will Bitcoin price exceed $100,000 by end of 2024?
+    Sends data to GPT-5 Nano using function calling.
+    Returns the structured response.
     """
-
-    # Example 3 - Should have impact
-    test3 = """
-    News: Federal Reserve announces 0.25% interest rate cut, citing cooling inflation and stable employment numbers.
-
-    Market: Will the Fed cut interest rates again before December 2024?
-    """
-
-    # Example 4 - Edge case: indirect impact
-    test4 = """
-    News: Microsoft announces massive layoffs due to AI automation reducing workforce needs.
-
-    Market: Will Microsoft stock price exceed $400 by year end?
-    """
-
-    # Test all examples
-    test_cases = [
-        ("Apple China impact", test1),
-        ("NASA/Bitcoin no impact", test2),
-        ("Fed rates impact", test3),
-        ("Microsoft layoffs impact", test4)
+    messages = [
+        {"role": "system", "content": "Respond only by calling the function."},
+        {"role": "user", "content": json.dumps({
+            "data": payload,
+            "prompt": user_prompt
+        })}
     ]
 
-    for name, test_case in test_cases:
-        result = ask_llm_if_related(test_case)
-        print(f"{name}: {result}")
+    response = client.chat.completions.create(
+        model="gpt-5-nano",
+        messages=messages,
+        functions=functions,
+        function_call={"name": "report_market_direction"},
+    )
+
+    msg = response.choices[0].message
+    if msg.function_call:
+        return json.loads(msg.function_call.arguments)
+    return {"decision": "undecided"}
+
+
+
+
+if __name__ == "__main__":
+    market_id = "0x6728bcaed6aa840074d7da69cddb04d0f8176592ce197a48f314f873a0ac163b"
+    payload = fetch_and_extract(market_id)
+    user_prompt = "Decide if the price of 'Yes' is expected to increase based on current market context."
+    result = ask_direction_with_function(payload, user_prompt)
+    print(json.dumps(result, indent=2))
+    # # Example 1 - Should have impact
+    # test1 = """
+    # News: Apple reports iPhone sales down 10% in China amid increasing competition from local brands like Huawei and Xiaomi.
+    #
+    # Market: Will Apple's revenue from China be below $15 billion in Q4 2024?
+    # """
+    #
+    # # Example 2 - Should have no impact
+    # test2 = """
+    # News: NASA successfully launches new Mars rover mission, expected to land in February 2025.
+    #
+    # Market: Will Bitcoin price exceed $100,000 by end of 2024?
+    # """
+    #
+    # # Example 3 - Should have impact
+    # test3 = """
+    # News: Federal Reserve announces 0.25% interest rate cut, citing cooling inflation and stable employment numbers.
+    #
+    # Market: Will the Fed cut interest rates again before December 2024?
+    # """
+    #
+    # # Example 4 - Edge case: indirect impact
+    # test4 = """
+    # News: Microsoft announces massive layoffs due to AI automation reducing workforce needs.
+    #
+    # Market: Will Microsoft stock price exceed $400 by year end?
+    # """
+    #
+    # # Test all examples
+    # test_cases = [
+    #     ("Apple China impact", test1),
+    #     ("NASA/Bitcoin no impact", test2),
+    #     ("Fed rates impact", test3),
+    #     ("Microsoft layoffs impact", test4)
+    # ]
+    #
+    # for name, test_case in test_cases:
+    #     result = ask_llm_if_related(test_case)
+    #     print(f"{name}: {result}")
