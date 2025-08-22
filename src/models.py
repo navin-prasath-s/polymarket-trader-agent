@@ -24,33 +24,35 @@ embedding_model = TextEmbedding(embedding_model_name,
                                 cache_dir=str(cache_dir))
 
 
-prompt_asking_if_related = """You are a strict financial analyst. You will be given a news article and a polymarket question.
-Your task is to determine if the news article will have any DIRECT impact on the market outcome.
 
-IMPORTANT: Be very strict. Most news will NOT impact most markets.
-
-Examples of IMPACT (yes):
-- News: "Tesla reports record quarterly deliveries" + Market: "Will Tesla stock exceed $200?" = IMPACT (yes) - same company
-- News: "Apple CEO announces new iPhone features" + Market: "Will Apple beat Q4 earnings?" = IMPACT (yes) - same company  
-- News: "Fed cuts interest rates" + Market: "Will Fed cut rates again?" = IMPACT (yes) - same topic
-
-Examples of NO IMPACT (no):
-- News: "Tesla factory opens in Germany" + Market: "Will Bitcoin reach $100k?" = NO IMPACT (no) - different topics
-- News: "NASA launches Mars rover" + Market: "Will Bitcoin price exceed $100k?" = NO IMPACT (no) - completely unrelated
-- News: "Heavy rainfall in California" + Market: "Will Trump win the election?" = NO IMPACT (no) - unrelated topics
-- News: "Apple releases new iPhone" + Market: "Will Google stock rise?" = NO IMPACT (no) - different companies
-
-STRICT RULES:
-- Same company/person/organization = IMPACT (yes)
-- Same specific topic/event = IMPACT (yes) 
-- Different companies = NO IMPACT (no)
-- Different topics = NO IMPACT (no)
-- Vague connections = NO IMPACT (no)
-
-Default to NO IMPACT unless there is a clear, direct connection.
-Only answer "yes" or "no"."""
 
 def ask_llm_if_related(question):
+    prompt_asking_if_related = """You are a strict financial analyst. You will be given a news article and a polymarket question.
+    Your task is to determine if the news article will have any DIRECT impact on the market outcome.
+
+    IMPORTANT: Be very strict. Most news will NOT impact most markets.
+
+    Examples of IMPACT (yes):
+    - News: "Tesla reports record quarterly deliveries" + Market: "Will Tesla stock exceed $200?" = IMPACT (yes) - same company
+    - News: "Apple CEO announces new iPhone features" + Market: "Will Apple beat Q4 earnings?" = IMPACT (yes) - same company  
+    - News: "Fed cuts interest rates" + Market: "Will Fed cut rates again?" = IMPACT (yes) - same topic
+
+    Examples of NO IMPACT (no):
+    - News: "Tesla factory opens in Germany" + Market: "Will Bitcoin reach $100k?" = NO IMPACT (no) - different topics
+    - News: "NASA launches Mars rover" + Market: "Will Bitcoin price exceed $100k?" = NO IMPACT (no) - completely unrelated
+    - News: "Heavy rainfall in California" + Market: "Will Trump win the election?" = NO IMPACT (no) - unrelated topics
+    - News: "Apple releases new iPhone" + Market: "Will Google stock rise?" = NO IMPACT (no) - different companies
+
+    STRICT RULES:
+    - Same company/person/organization = IMPACT (yes)
+    - Same specific topic/event = IMPACT (yes) 
+    - Different companies = NO IMPACT (no)
+    - Different topics = NO IMPACT (no)
+    - Vague connections = NO IMPACT (no)
+
+    Default to NO IMPACT unless there is a clear, direct connection.
+    Only answer "yes" or "no"."""
+
     try:
         messages = [
             {
@@ -86,7 +88,7 @@ def ask_llm_if_related(question):
 
 
 client = openai.OpenAI(
-    api_key=os.getenv("OPENAI_API_KEY"),  # or leave blank if env var is set
+    api_key=os.getenv("OPENAI_API_KEY"),
 )
 
 functions = [
@@ -117,11 +119,40 @@ functions = [
     }
 ]
 
-def ask_direction_with_function(payload: dict, user_prompt: str) -> dict:
+def ask_direction_with_function(payload: dict) -> dict:
     """
     Sends data to GPT-5 Nano using function calling.
     Returns the structured response.
     """
+    user_prompt = (
+    "You are an automated Polymarket trading assistant.\n"
+    "\n"
+    "Behavioral rules:\n"
+    "1) Always respond by calling the function 'report_market_direction'. "
+    "   Never output free text.\n"
+    "2) You may choose 'undecided' if signals are weak/ambiguous or you do not "
+    "   expect a significant probability shift. Do not force a decision.\n"
+    "3) If you do decide, choose exactly one existing outcome label from the provided data, "
+    "   and a single direction: 'increase' or 'decrease'.\n"
+    "4) Consider only the provided market snapshot and prompt. Do NOT invent external facts.\n"
+    "5) Prefer caution near market close, on thin liquidity, or when price already implies the view.\n"
+    "6) Ignore style; optimize for correctness and calibration. No chain-of-thought in the output.\n"
+    "\n"
+    "Data schema reminder (input):\n"
+    "{\n"
+    '  \"question\": str,\n'
+    '  \"description\": str,\n'
+    '  \"endDate\": \"YYYY-MM-DD\",\n'
+    '  \"currentDate\": \"YYYY-MM-DD\",\n'
+    '  \"outcomePairs\": [ {\"outcome\": str, \"price\": float}, ... ]\n'
+    "}\n"
+    "\n"
+    "Decision policy (high-level heuristics; not strict rules):\n"
+    "- Price context: extremely low/high prices may be near-saturated; require stronger evidence to predict further move.\n"
+    "- Time context: if endDate is very near and no strong catalyst is implied in the prompt, lean 'undecided'.\n"
+    "- Multi-outcome parity: if outcomes are close and no differentiator is present, lean 'undecided'.\n"
+    "- Binary example: If 'Yes' looks underpriced relative to prompt signals, recommend option='Yes', direction='increase'.\n"
+)
     messages = [
         {"role": "system", "content": "Respond only by calling the function."},
         {"role": "user", "content": json.dumps({
@@ -148,8 +179,7 @@ def ask_direction_with_function(payload: dict, user_prompt: str) -> dict:
 if __name__ == "__main__":
     market_id = "0x6728bcaed6aa840074d7da69cddb04d0f8176592ce197a48f314f873a0ac163b"
     payload = fetch_and_extract(market_id)
-    user_prompt = "Decide if the price of 'Yes' is expected to increase based on current market context."
-    result = ask_direction_with_function(payload, user_prompt)
+    result = ask_direction_with_function(payload)
     print(json.dumps(result, indent=2))
     # # Example 1 - Should have impact
     # test1 = """

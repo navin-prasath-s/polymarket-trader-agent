@@ -6,17 +6,6 @@
 # querystring = {"condition_ids": id}
 # response = requests.get(url, params=querystring)
 # print(json.dumps(response.json(), indent=2))
-#
-'''
-
-    question : text
-    description : more text
-    endDateIso - "2025-08-23"
-    current_date - stamp it
-    outcomes - "[\"Yes\", \"No\"]"
-    outcomePrices - [\"0.0085\", \"0.9915\"]
-
-'''
 
 import json
 import requests
@@ -87,11 +76,35 @@ def fetch_and_extract(market_id: str) -> dict:
 
     outcome_pairs = _pair_outcomes_prices(outcomes, prices_list)
 
+    end = end_date_only
+    current = current_date_only
+    outcomes = _parse_list_field(m.get("outcomes", []))
+    prices = _to_floats(_parse_list_field(m.get("outcomePrices", [])))
+    outcome_pairs = _pair_outcomes_prices(outcomes, prices)
+
+    # Heuristics
+    today = datetime.now(timezone.utc).date()
+    end_date_obj = datetime.fromisoformat(end).date()
+    time_to_expiry = max((end_date_obj - today).days, 0)
+
+    spread = abs(prices[0] - prices[1]) if len(prices) >= 2 else 0.0
+    extremeness = min(prices) if prices else 0.0
+    price_sum = sum(prices)
+    one_day_change = float(m.get("oneDayPriceChange", 0.0))
+    volume_24h = float(m.get("volume24hr", 0.0))
+
     return {
+        "news": "pass",
         "question": m.get("question", ""),
         "description": m.get("description", ""),
-        "endDate": end_date_only,
-        "currentDate": current_date_only,
+        "endDate": end,
+        "currentDate": current,
+        "timeToExpiryDays": time_to_expiry,
+        "spread": spread,
+        "extremeness": extremeness,
+        "priceSum": price_sum,
+        "oneDayPriceChange": one_day_change,
+        "volume24h": volume_24h,
         "outcomePairs": outcome_pairs,
     }
 
