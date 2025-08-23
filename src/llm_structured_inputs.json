@@ -1,0 +1,518 @@
+[
+  {
+    "question": "Ghislaine Maxwell accuses Trump of sexual misconduct?",
+    "description": "This market will resolve to \"Yes\" if Ghislaine Maxwell publicly accuses Donald Trump of sexual misconduct between July 23, 2025 and December 31, 2025, 11:59 PM ET. Otherwise, this market will resolve to \"No.\"\n\nTo qualify, she must explicitly state that Trump engaged in sexual misconduct, or clearly describe behavior that meets that description. Sexual misconduct includes, but is not limited to, sexual harassment, sexual assault, unwanted advances, infidelity, affairs, or pedophilia. Trump must be named directly.\n\nThe accusation must be made by Maxwell and made public within the specified date range.\n\nThe resolution source will be a consensus of credible reporting",
+    "endDate": "2025-12-31",
+    "currentDate": "2025-08-23",
+    "conditionId": "0x3270b116f7e61aa04f9652fff783e6e25a6b2c99df092a709a03f9b662d1dd41",
+    "timeToExpiryDays": 130,
+    "spread": 0.9490000000000001,
+    "extremeness": 0.0255,
+    "priceSum": 1.0,
+    "volume24h": 5996.1,
+    "outcomePairs": [
+      {
+        "outcome": "Yes",
+        "price": 0.0255
+      },
+      {
+        "outcome": "No",
+        "price": 0.9745
+      }
+    ],
+    "related_articles": [
+      {
+        "title": "Ghislaine Maxwell claims in DOJ interview that Epstein list doesn't exist",
+        "summary": "Maxwell denied that there is any 'client list' of prominent figures involved in Jeffrey Epstein's crimes."
+      },
+      {
+        "title": "Justice Department releases transcripts from its conversations with Ghislaine Maxwell",
+        "summary": "Maxwell spoke with top DOJ officials over the course of two days in late July. Asked about President Trump, she said she had never witnessed him \"in any inappropriate setting in any way.\""
+      }
+    ]
+  },
+  {
+    "question": "Israel withdraws from Gaza in 2025?",
+    "description": "This market will resolve to \"Yes\" if Israel announces it has ceased all ground operations within and has withdrawn all ground forces from Gaza between January 1 and December 31, 2025, 11:59 PM ET. Otherwise, this market will resolve to \"No\".\n\nFor this market to resolve to \"Yes\" it is sufficient that Israel announces its ground forces have withdrawn into or behind intended buffer zones, even if that zone is established on internationally recognized Palestinian territory.\n\nThe primary resolution source for this market will be information from the Israeli government, however a consensus of credible reporting will also be used.",
+    "endDate": "2025-12-31",
+    "currentDate": "2025-08-23",
+    "conditionId": "0x4f6be3a3a4d10c128211a0a430e44de4b66e7e9f7ab02a0393f1f4ad924ad980",
+    "timeToExpiryDays": 130,
+    "spread": 0.5800000000000001,
+    "extremeness": 0.21,
+    "priceSum": 1.0,
+    "volume24h": 1028.296822,
+    "outcomePairs": [
+      {
+        "outcome": "Yes",
+        "price": 0.21
+      },
+      {
+        "outcome": "No",
+        "price": 0.79
+      }
+    ],
+    "related_articles": [
+      {
+        "title": "How Israel's policies created famine in Gaza",
+        "summary": "Israel has systematically obstructed food entering Gaza, aid agencies say, as a UN-backed body confirms a famine."
+      }
+    ]
+  },
+  {
+    "question": "Gaza mass population relocation in 2025?",
+    "description": "On February 4, Donald Trump floated a plan for the reconstruction of Gaza including the relocation of Gaza\u2019s population (see: https://www.reuters.com/world/trump-netanyahu-set-pivotal-talks-middle-east-agenda-2025-02-04/)\n\nThis market will resolve to \u201cYes\u201d if at least 500,000 Gazans leave the Gaza strip between February 6, and December 31, 2025, 11:59 PM ET. Otherwise, this market will resolve to \u201cNo\u201d.\n\nThis includes the transfer of Gazans to Israel, the West Bank or other countries, as well as the departure of Gazans from the Gaza Strip through visa or refugee programs.\n\nThis market refers to the total number of Gazans who leave, regardless of method.  \n\nAnnouncements of relocation plans will not count, only actual relocation will qualify.\n\nThe resolution source for this market is a consensus of credible reporting.",
+    "endDate": "2025-12-31",
+    "currentDate": "2025-08-23",
+    "conditionId": "0x4bd1327edfdbb3c23f8cc81094435aaa421f1f77a9eab6e867ff055905862a3a",
+    "timeToExpiryDays": 130,
+    "spread": 0.79,
+    "extremeness": 0.105,
+    "priceSum": 1.0,
+    "volume24h": 13282.651741,
+    "outcomePairs": [
+      {
+        "outcome": "Yes",
+        "price": 0.105
+      },
+      {
+        "outcome": "No",
+        "price": 0.895
+      }
+    ],
+    "related_articles": [
+      {
+        "title": "How Israel's policies created famine in Gaza",
+        "summary": "Israel has systematically obstructed food entering Gaza, aid agencies say, as a UN-backed body confirms a famine."
+      },
+      {
+        "title": "Famine in Gaza City is 'failure of humanity', UN chief says",
+        "summary": "A UN-backed body confirms famine in Gaza City and surrounding areas, and says half a million are facing \"catastrophic\" conditions."
+      },
+      {
+        "title": "Famine is declared in Gaza: What does it take to make this pronouncement?",
+        "summary": "An announcement of famine \u2014 as has now happened regarding Gaza \u2014 is a complicated decision. Here's what must be considered before such a declaration is made."
+      }
+    ]
+  },
+  {
+    "question": "Israel x Iran ceasefire broken by October 31?",
+    "description": "This market will resolve to \"Yes\" if either Israel initiates a drone, missile, or air strike on Iranian soil or any official Iranian embassy or consulate, or Iran initiates a drone, missile, or air strike on Israeli soil or any official Israeli embassy or consulate, by 11:59 PM ET on the listed date. Otherwise, this market will resolve to \"No\".\n\nFor the purposes of this market, a qualifying \"strike\" is defined as the use of aerial bombs, drones or missiles (including cruise or ballistic missiles) launched by Israeli or Iranian military forces that impact the other party\u2019s ground territory or any official embassy or consulate (e.g., if a weapons depot on Iranian soil is hit by an Israeli missile, or an Israeli air base is hit by an Iranian drone, this market will resolve to \"Yes\") that is officially acknowledged by the relevant government or a consensus of credible reporting.\n\nMissiles or drones which are intercepted and surface-to-air missile strikes will not be sufficient for a \"Yes\" resolution regardless of whether they land on the opposing party\u2019s territory or cause damage.",
+    "endDate": "2025-10-31",
+    "currentDate": "2025-08-23",
+    "conditionId": "0x68469fb64aca83a6ae036946381e20a8c8d25b6e690da1b2bb23e250abc2a261",
+    "timeToExpiryDays": 69,
+    "spread": 0.48,
+    "extremeness": 0.26,
+    "priceSum": 1.0,
+    "volume24h": 11224.883253999998,
+    "outcomePairs": [
+      {
+        "outcome": "Yes",
+        "price": 0.26
+      },
+      {
+        "outcome": "No",
+        "price": 0.74
+      }
+    ],
+    "related_articles": [
+      {
+        "title": "How Israel's policies created famine in Gaza",
+        "summary": "Israel has systematically obstructed food entering Gaza, aid agencies say, as a UN-backed body confirms a famine."
+      }
+    ]
+  },
+  {
+    "question": "Israel x Hamas ceasefire by August 31?",
+    "description": "On March 17, Israel announced extensive strikes on terror targets belonging to the Hamas terrorist organization in the Gaza Strip ending a previous ceasefire agreement which had been agreed on January 15 (See: https://x.com/IDF/status/1901802698237935705).\n\nThis market will resolve to \"Yes\" if there is an official ceasefire agreement, defined as a publicly announced and mutually agreed halt in military engagement, between Israel and Hamas between July 14, and August 31, 2025, 11:59 PM ET.\n\nIf the agreement is officially reached before the resolution date, this market will resolve to \"Yes\", regardless of whether the ceasefire officially starts afterwards.\n\nAn announced agreement to reinstate the previous agreed upon January 15th ceasefire deal will qualify.\n\nAny form of informal agreement will not be considered an official ceasefire. Humanitarian pauses will not count toward the resolution of this market.\n\nThis market's resolution will be based on official announcements from both Israel and Hamas, however a wide consensus of credible media reporting stating an official ceasefire agreement between Israel and Hamas has been reached will suffice.",
+    "endDate": "2025-08-31",
+    "currentDate": "2025-08-23",
+    "conditionId": "0xb2fc36d5f9bd808e7e1c65b21da9f69cb112541d3b403034f66b0004e38172ea",
+    "timeToExpiryDays": 8,
+    "spread": 0.8400000000000001,
+    "extremeness": 0.08,
+    "priceSum": 1.0,
+    "volume24h": 613295.0140609998,
+    "outcomePairs": [
+      {
+        "outcome": "Yes",
+        "price": 0.08
+      },
+      {
+        "outcome": "No",
+        "price": 0.92
+      }
+    ],
+    "related_articles": [
+      {
+        "title": "Famine is declared in Gaza: What does it take to make this pronouncement?",
+        "summary": "An announcement of famine \u2014 as has now happened regarding Gaza \u2014 is a complicated decision. Here's what must be considered before such a declaration is made."
+      }
+    ]
+  },
+  {
+    "question": "Israel x Hamas ceasefire by October 31?",
+    "description": "On March 17, Israel announced extensive strikes on terror targets belonging to the Hamas terrorist organization in the Gaza Strip ending a previous ceasefire agreement which had been agreed on January 15 (See: https://x.com/IDF/status/1901802698237935705).\n\nThis market will resolve to \"Yes\" if there is an official ceasefire agreement, defined as a publicly announced and mutually agreed halt in military engagement, between Israel and Hamas between August 18 and October 31, 2025, 11:59 PM ET.\n\nIf the agreement is officially reached before the resolution date, this market will resolve to \"Yes\", regardless of whether the ceasefire officially starts afterwards.\n\nAn announced agreement to reinstate the previous agreed upon January 15th ceasefire deal will qualify.\n\nAny form of informal agreement will not be considered an official ceasefire. Humanitarian pauses will not count toward the resolution of this market.\n\nA peace deal or political framework will qualify if it includes a publicly announced and mutually agreed halt in military engagement, effective on a specific date. Frameworks or agreements that outline terms for a future peace but do not include an explicit, dated commitment to stop fighting will not count.\n\nThis market's resolution will be based on official announcements from both Israel and Hamas, however a wide consensus of credible media reporting stating an official ceasefire agreement between Israel and Hamas has been reached will suffice.",
+    "endDate": "2025-10-31",
+    "currentDate": "2025-08-23",
+    "conditionId": "0xacac1a4b66459802a709b2f2eeed96fed8f8982a6fa6a782c3bc29556cc5b5a0",
+    "timeToExpiryDays": 69,
+    "spread": 0.12999999999999995,
+    "extremeness": 0.435,
+    "priceSum": 1.0,
+    "volume24h": 2463.6297830000003,
+    "outcomePairs": [
+      {
+        "outcome": "Yes",
+        "price": 0.435
+      },
+      {
+        "outcome": "No",
+        "price": 0.565
+      }
+    ],
+    "related_articles": [
+      {
+        "title": "Famine is declared in Gaza: What does it take to make this pronouncement?",
+        "summary": "An announcement of famine \u2014 as has now happened regarding Gaza \u2014 is a complicated decision. Here's what must be considered before such a declaration is made."
+      }
+    ]
+  },
+  {
+    "question": " Will the U.S. take a stake in Intel by September 30?",
+    "description": "On August 18, 2025, Bloomberg reported that the Trump administration is in talks to acquire a 10% stake in Intel Corporation. More information can be found here: https://www.reuters.com/business/trump-administration-talks-take-10-stake-intel-bloomberg-news-reports-2025-08-18/.\n\nThis market will resolve to \u201cYes\u201d if the United States federal government or Intel officially announce that the U.S. federal government has acquired, or is acquiring, equity securities of Intel Corporation, including through CHIPS-for-equity or secondary purchase, by September 30, 2025 at 11:59 PM ET. Otherwise, it will resolve to \u201cNo.\u201d \n\nOnly acquisitions by the U.S. federal government acting directly or through a wholly owned vehicle qualify; acquisitions by states, pensions, index or mutual funds, or consortia do not.\n\nThe primary resolution source for this market will be official information from the United States federal government and Intel Corporation; however, a consensus of credible reporting may also be used.",
+    "endDate": "2025-09-30",
+    "currentDate": "2025-08-23",
+    "conditionId": "0x67ae61ad56a822fb2e0ad2871e09fecb0d61941a4a872a01973fbd6585d65254",
+    "timeToExpiryDays": 38,
+    "spread": 1.0,
+    "extremeness": 0.0,
+    "priceSum": 1.0,
+    "volume24h": 24087.444604999997,
+    "outcomePairs": [
+      {
+        "outcome": "Yes",
+        "price": 1.0
+      },
+      {
+        "outcome": "No",
+        "price": 0.0
+      }
+    ],
+    "related_articles": [
+      {
+        "title": "Intel will give the U.S. government a 10% stake, Trump says",
+        "summary": "The president's highly unusual announcement underscores the Trump administration's desire to take control over U.S. businesses."
+      }
+    ]
+  },
+  {
+    "question": "Trump imposes tariff on semiconductors by August 31?",
+    "description": "This market will resolve to \"Yes\" if Donald Trump signs any federal legislation or performs any executive action enacting a tariff on imports of semiconductors into the United States by August 31, 2025, 11:59 PM ET. Otherwise, this market will resolve to \"No\".\n\nOnly tariffs specifically targeting semiconductors will qualify. For example, a general tariff (tariffs on all imports into the U.S.) or country-specific tariff (tariffs on all imports from China) will not count toward this market's resolution.\n\nTariffs on semiconductors from a specific country will qualify.\n\nAny tariff which is officially enacted within the market's time frame will qualify, regardless of when the tariff goes into effect.\n\nThis market's primary resolution source will be official information from the Trump administration; however, a consensus of credible information will also be used.",
+    "endDate": "2025-08-31",
+    "currentDate": "2025-08-23",
+    "conditionId": "0xba01ac111faf36278bfe4341de2c8638b40375332d1b5958e7a8739108e8b9b5",
+    "timeToExpiryDays": 8,
+    "spread": 0.44999999999999996,
+    "extremeness": 0.275,
+    "priceSum": 1.0,
+    "volume24h": 928.028506,
+    "outcomePairs": [
+      {
+        "outcome": "Yes",
+        "price": 0.275
+      },
+      {
+        "outcome": "No",
+        "price": 0.725
+      }
+    ],
+    "related_articles": [
+      {
+        "title": "Intel will give the U.S. government a 10% stake, Trump says",
+        "summary": "The president's highly unusual announcement underscores the Trump administration's desire to take control over U.S. businesses."
+      }
+    ]
+  },
+  {
+    "question": "Will Trump pardon Ghislaine Maxwell by August 31?",
+    "description": "This market will resolve to \"Yes\" if Ghislaine Maxwell receives a presidential pardon, commutation, or reprieve from Donald Trump by August 31, 2025, 11:59 PM ET. Otherwise, this market will resolve to \"No\".\n\nIf it becomes impossible for Trump issue a federal pardon, commutation, or reprieve within this market's timeframe, it may immediately resolve to \"No\".\n\nThe primary resolution source for whether a person is pardoned or not will be official information from the US government, however a consensus of credible reporting will also be used.\n",
+    "endDate": "2025-08-31",
+    "currentDate": "2025-08-23",
+    "conditionId": "0xb0d2eefd1aa9f74acdc229296ce884e4e1fab6ae4113048543182d6c40b9cbd4",
+    "timeToExpiryDays": 8,
+    "spread": 0.9830000000000001,
+    "extremeness": 0.0085,
+    "priceSum": 1.0,
+    "volume24h": 1394.450415,
+    "outcomePairs": [
+      {
+        "outcome": "Yes",
+        "price": 0.0085
+      },
+      {
+        "outcome": "No",
+        "price": 0.9915
+      }
+    ],
+    "related_articles": [
+      {
+        "title": "Justice Department releases transcripts from its conversations with Ghislaine Maxwell",
+        "summary": "Maxwell spoke with top DOJ officials over the course of two days in late July. Asked about President Trump, she said she had never witnessed him \"in any inappropriate setting in any way.\""
+      }
+    ]
+  },
+  {
+    "question": "Will Trump pardon Ghislaine Maxwell by end of 2026?",
+    "description": "This market will resolve to \"Yes\" if Ghislaine Maxwell receives a presidential pardon, commutation, or reprieve from Donald Trump between July 23, 2025 and December 31, 2026, 11:59 PM ET. Otherwise, this market will resolve to \"No\".\n\nIf it becomes impossible for Trump issue a federal pardon, commutation, or reprieve within this market's timeframe, it may immediately resolve to \"No\".\n\nThe primary resolution source for whether a person is pardoned or not will be official information from the US government, however a consensus of credible reporting will also be used.",
+    "endDate": "2026-12-31",
+    "currentDate": "2025-08-23",
+    "conditionId": "0x0dc45815251ab7d5c3cbde5d7eee5bc96eac3d924c0a4c4f10175049e068fe20",
+    "timeToExpiryDays": 495,
+    "spread": 0.6100000000000001,
+    "extremeness": 0.195,
+    "priceSum": 1.0,
+    "volume24h": 10122.22,
+    "outcomePairs": [
+      {
+        "outcome": "Yes",
+        "price": 0.195
+      },
+      {
+        "outcome": "No",
+        "price": 0.805
+      }
+    ],
+    "related_articles": [
+      {
+        "title": "Justice Department releases transcripts from its conversations with Ghislaine Maxwell",
+        "summary": "Maxwell spoke with top DOJ officials over the course of two days in late July. Asked about President Trump, she said she had never witnessed him \"in any inappropriate setting in any way.\""
+      }
+    ]
+  },
+  {
+    "question": "Will Trump lower tariffs on Canada by December 31?",
+    "description": "This market will resolve to \u201cYes\u201d if Donald Trump signs any federal legislation or performs any executive action that lowers, pauses, delays, or removes any tariffs on imports from Canada by December 31, 2025, 11:59 PM ET. Otherwise, this market will resolve to \u201cNo\u201d.\n\nActions that lower, pause, delay, or remove any tariffs on Canadian imports will qualify, including changes to the reciprocal tariff, or any other existing or new tariffs specifically targeting Canadian goods.\n\nOnly the removal of tariffs specifically targeting Canada will qualify. For example, the removal of the 10% general tariff on all imports into the U.S., or a tariff on specific Canadian provinces or entities, will not count toward this market\u2019s resolution.\n\nItem-specific tariff exemptions, such as those outlined in the U.S. Customs and Border Protection notice dated April 11, 2025, which excluded 25 HTSUS codes covering electronics, will not qualify.\n\nAny action officially enacted within the market\u2019s time frame will qualify, regardless of when the change goes into effect.\n\nThis market\u2019s primary resolution source will be official information from the Trump administration; however, a consensus of credible information from major news outlets or government statements will also be used.",
+    "endDate": "2025-07-31",
+    "currentDate": "2025-08-23",
+    "conditionId": "0x692b8170d243494b0c1409e5b592a45eac7e526963ab7d4b9e83c76751c014b4",
+    "timeToExpiryDays": 0,
+    "spread": 0.5740000000000001,
+    "extremeness": 0.213,
+    "priceSum": 1.0,
+    "volume24h": 916.505929,
+    "outcomePairs": [
+      {
+        "outcome": "Yes",
+        "price": 0.787
+      },
+      {
+        "outcome": "No",
+        "price": 0.213
+      }
+    ],
+    "related_articles": [
+      {
+        "title": "Trump says 'We want to be very good to Canada,' as its leader drops some tariffs",
+        "summary": "After Canadian Prime Minister Mark Carney announced he would lower tariffs, President Trump said \"We want to be very good to Canada. I like Carney a lot. I think he's a very good person.\""
+      }
+    ]
+  },
+  {
+    "question": "Will Trump agree to a tariff agreement with Canada in August?",
+    "description": "This market will resolve to \"Yes\" if an official agreement over tariffs, defined as a publicly announced mutual agreement, is reached between the United States and the listed country/entity between August 1, and August 31, 2025, 11:59 PM ET. Otherwise, this market will resolve to \u201cNo\u201d.\n\nIf such an agreement is officially reached before the resolution date, this market will resolve to \"Yes\", regardless of if/when the agreement goes into effect.\n\nAgreements to extend tariff exemptions will qualify if announced as an individualized extension. However, tariff exemptions which are announced as part of a class of exemptions and do not reflect individual deals - such as Trump\u2019s April 9 pause on all reciprocal tariffs other than those on China - will not qualify (see: https://www.whitehouse.gov/presidential-actions/2025/04/modifying-reciprocal-tariff-rates-to-reflect-trading-partner-retaliation-and-alignment/).  \n\nInformal and unilateral announcements which do not constitute a finalized agreement will not count.\n\nAgreements that include the United States and the listed country/entity as parties, even if they also involve other countries, will qualify for resolution.\n\nThe primary resolution source for this market will be a consensus of credible reporting confirming an agreement has been reached.",
+    "endDate": "2025-08-31",
+    "currentDate": "2025-08-23",
+    "conditionId": "0xd854644bc73383a2737771b8c2b55aa43ac53c375b32ea7ff70fe17e8fc187da",
+    "timeToExpiryDays": 8,
+    "spread": 0.36000000000000004,
+    "extremeness": 0.32,
+    "priceSum": 1.0,
+    "volume24h": 3381.963118,
+    "outcomePairs": [
+      {
+        "outcome": "Yes",
+        "price": 0.32
+      },
+      {
+        "outcome": "No",
+        "price": 0.68
+      }
+    ],
+    "related_articles": [
+      {
+        "title": "Trump says 'We want to be very good to Canada,' as its leader drops some tariffs",
+        "summary": "After Canadian Prime Minister Mark Carney announced he would lower tariffs, President Trump said \"We want to be very good to Canada. I like Carney a lot. I think he's a very good person.\""
+      }
+    ]
+  },
+  {
+    "question": "U.S. agrees to a new trade deal with \"Canada\"?",
+    "description": "This market will resolve to \"Yes\" if a free trade agreement with the specified country or entity becomes law in the United States between July 25, and December 31, 2025, 11:59 PM ET. Th Otherwise, this market will resolve to \"No\".\n\nThis includes both agreements that become law through Senate ratification and Presidential approval, or through the enactment of a Congressional-Executive Agreement signed into law by the President.\n\nThe resolution source will be a consensus of credible reporting.",
+    "endDate": "2025-12-31",
+    "currentDate": "2025-08-23",
+    "conditionId": "0x9143e4e4a449229e3d63711df9ebc06c88993a402cea98cc0542197678250d43",
+    "timeToExpiryDays": 130,
+    "spread": 0.8200000000000001,
+    "extremeness": 0.09,
+    "priceSum": 1.0,
+    "volume24h": 15.58,
+    "outcomePairs": [
+      {
+        "outcome": "Yes",
+        "price": 0.09
+      },
+      {
+        "outcome": "No",
+        "price": 0.91
+      }
+    ],
+    "related_articles": [
+      {
+        "title": "Trump says 'We want to be very good to Canada,' as its leader drops some tariffs",
+        "summary": "After Canadian Prime Minister Mark Carney announced he would lower tariffs, President Trump said \"We want to be very good to Canada. I like Carney a lot. I think he's a very good person.\""
+      }
+    ]
+  },
+  {
+    "question": "Will Texas enact a redistricting law by August 22?",
+    "description": "This market shall resolve to \"Yes\" if the State of Texas enacts a law that modifies the boundaries of federal Congressional Districts in Texas by August 22, 2025, 11:59 PM ET. Otherwise , this market will resolve to \"No\". \n\nCommittee votes, hearings, or reports, other procedural votes, and any subsequent litigation will have no impact on the resolution of this market.",
+    "endDate": "2025-08-22",
+    "currentDate": "2025-08-23",
+    "conditionId": "0xbdf914f129dcca527c3c255260374280508a0a58184563c8d504d25818aff245",
+    "timeToExpiryDays": 0,
+    "spread": 0.9950000000000001,
+    "extremeness": 0.0025,
+    "priceSum": 1.0,
+    "volume24h": 7422.635163000001,
+    "outcomePairs": [
+      {
+        "outcome": "Yes",
+        "price": 0.0025
+      },
+      {
+        "outcome": "No",
+        "price": 0.9975
+      }
+    ],
+    "related_articles": [
+      {
+        "title": "See how new voting maps in Texas and California would shift the political landscape",
+        "summary": "The major parties' redistricting battle escalated this week, with lawmakers in the country's two most populous states each taking a notable step toward a new congressional map."
+      }
+    ]
+  },
+  {
+    "question": "California redistricting referendum passes?",
+    "description": "Proposition 50 is a 2025 legislatively referred constitutional amendment on congressional redistricting, proposed for the statewide special election in California currently set for November 4, 2025.\n\nThis market will resolve to \u201cYes\u201d if Proposition 50 or any other legislatively referred statewide measure that authorizes or implements congressional redistricting is approved by a majority of voters at the California statewide special election currently set for November 4, 2025. Otherwise, this market will resolve to \u201cNo.\u201d\n\nIf by the last legally operative deadline for placing measures on the November 4, 2025 statewide ballot\u2014including any deadline set or modified by the statute calling that special election\u2014no qualifying legislatively referred measure has been approved for submission to voters, and there is no enacted statute or pending court order that could still place such a measure on that ballot, the market will resolve \u201cNo\u201d.\n\nIf the election is officially rescheduled, the same rule applies to the new ballot and its corresponding deadlines.\n\nThe resolution source will be based on the official certified results of the vote as published by  State of California. Subsequent litigation, administrative challenges, or failure of any post-approval triggers will not be considered.",
+    "endDate": "2025-12-31",
+    "currentDate": "2025-08-23",
+    "conditionId": "0x0d7caa9700c1107c45a9bf02ccd1f3d9dd91aa1539be69a6152a8a96db5e24a5",
+    "timeToExpiryDays": 130,
+    "spread": 0.73,
+    "extremeness": 0.135,
+    "priceSum": 1.0,
+    "volume24h": 32829.912084999996,
+    "outcomePairs": [
+      {
+        "outcome": "Yes",
+        "price": 0.865
+      },
+      {
+        "outcome": "No",
+        "price": 0.135
+      }
+    ],
+    "related_articles": [
+      {
+        "title": "See how new voting maps in Texas and California would shift the political landscape",
+        "summary": "The major parties' redistricting battle escalated this week, with lawmakers in the country's two most populous states each taking a notable step toward a new congressional map."
+      }
+    ]
+  },
+  {
+    "question": "Will the Republican Party control the House after the 2026 Midterm elections?",
+    "description": "This market will resolve according to the party that controls the House of Representatives following the 2026 U.S. House elections scheduled for November 3, 2026.\n\nHouse control is defined as having more than half of the voting members of the U.S. House of Representatives.\n\nIf the outcome of this election is ambiguous given the above rules, this market will remain open until the Speaker of the House is selected following the 2026 U.S. general election, at which point it will resolve to the party the Speaker is affiliated with at the time of their election to that position. If the elected Speaker does not caucus with any listed party this market will resolve \u201cOther\u201d.\n\nDetermination of which party controls the House after the 2026 U.S. House elections will be based on a consensus of credible reporting, or if there is ambiguity, final federal and/or state election authority certification or other final official determination of the 2026 election results.",
+    "endDate": "2025-07-11",
+    "currentDate": "2025-08-23",
+    "conditionId": "0x4e4f77e7dbf4cab666e9a1943674d7ae66348e862df03ea6f44b11eb95731928",
+    "timeToExpiryDays": 0,
+    "spread": 0.39999999999999997,
+    "extremeness": 0.3,
+    "priceSum": 1.0,
+    "volume24h": 69.1,
+    "outcomePairs": [
+      {
+        "outcome": "Yes",
+        "price": 0.3
+      },
+      {
+        "outcome": "No",
+        "price": 0.7
+      }
+    ],
+    "related_articles": [
+      {
+        "title": "See how new voting maps in Texas and California would shift the political landscape",
+        "summary": "The major parties' redistricting battle escalated this week, with lawmakers in the country's two most populous states each taking a notable step toward a new congressional map."
+      }
+    ]
+  },
+  {
+    "question": "Will the Democratic Party control the House after the 2026 Midterm elections?",
+    "description": "This market will resolve according to the party that controls the House of Representatives following the 2026 U.S. House elections scheduled for November 3, 2026.\n\nHouse control is defined as having more than half of the voting members of the U.S. House of Representatives.\n\nIf the outcome of this election is ambiguous given the above rules, this market will remain open until the Speaker of the House is selected following the 2026 U.S. general election, at which point it will resolve to the party the Speaker is affiliated with at the time of their election to that position. If the elected Speaker does not caucus with any listed party this market will resolve \u201cOther\u201d.\n\nDetermination of which party controls the House after the 2026 U.S. House elections will be based on a consensus of credible reporting, or if there is ambiguity, final federal and/or state election authority certification or other final official determination of the 2026 election results.",
+    "endDate": "2025-07-11",
+    "currentDate": "2025-08-23",
+    "conditionId": "0xd5d9fc47718bd553592d126b1fa5e87183d27f3936975b0c04cc0f2dec1f1bb4",
+    "timeToExpiryDays": 0,
+    "spread": 0.39999999999999997,
+    "extremeness": 0.3,
+    "priceSum": 1.0,
+    "volume24h": 526.645866,
+    "outcomePairs": [
+      {
+        "outcome": "Yes",
+        "price": 0.7
+      },
+      {
+        "outcome": "No",
+        "price": 0.3
+      }
+    ],
+    "related_articles": [
+      {
+        "title": "See how new voting maps in Texas and California would shift the political landscape",
+        "summary": "The major parties' redistricting battle escalated this week, with lawmakers in the country's two most populous states each taking a notable step toward a new congressional map."
+      }
+    ]
+  },
+  {
+    "question": "2026 Balance of Power: D Senate, D House",
+    "description": "This market will resolve according to the result of the 2026 United States midterm elections.\n\nA party will be considered to have 'control' of the House of Representatives, if they win a majority of voting seats.\n\nA party will be considered to have 'control' of the Senate if they have more than half of the voting Senate members, or half of the voting Senate members and the Vice President.\n\nA candidate's party is determined by their ballot-listed or otherwise identifiable affiliation with that party at the time the 2026 United States midterm elections are conclusively called by this market's resolution sources. A candidate without a ballot-listed affiliation to either the Democrat or Republican Parties will be considered a member of one of these parties based on the party that they most recently expressed their intent to caucus with at the time the 2026 United States midterm elections are conclusively called by this market's resolution sources.\n\nIf control of the House is ambiguous given the above rules, this market will resolve according to the party affiliation of the first Speaker of the US House who is selected following the 2026 United States midterm elections. \n\nIf control of the Senate is ambiguous given the above rules, this market will resolve according to the party affiliation of the first Majority Leader of the US Senate who is selected following the 2026 United States midterm elections.\n\nThe resolution source for this market is the Associated Press, Fox News, and NBC. This market will resolve once all three sources have conclusively called winners of the House and Senate in the 2026 United States midterm elections. If all three sources do not achieve consensus in calling the relevant races for this market, it will resolve based on the official certification.",
+    "endDate": "2026-11-03",
+    "currentDate": "2025-08-23",
+    "conditionId": "0x16c63b7cc37f012b9f59ee164ec03877914c701d06d48291ae8d6fc08a088b0d",
+    "timeToExpiryDays": 437,
+    "spread": 0.5,
+    "extremeness": 0.25,
+    "priceSum": 1.0,
+    "volume24h": 0.0,
+    "outcomePairs": [
+      {
+        "outcome": "Yes",
+        "price": 0.25
+      },
+      {
+        "outcome": "No",
+        "price": 0.75
+      }
+    ],
+    "related_articles": [
+      {
+        "title": "See how new voting maps in Texas and California would shift the political landscape",
+        "summary": "The major parties' redistricting battle escalated this week, with lawmakers in the country's two most populous states each taking a notable step toward a new congressional map."
+      }
+    ]
+  }
+]

@@ -3,6 +3,7 @@ import logging
 import os
 from pathlib import Path
 import re
+from typing import Dict, Any
 
 from dotenv import load_dotenv
 from fastembed import TextEmbedding
@@ -95,23 +96,28 @@ functions = [
     {
         "name": "report_market_direction",
         "description": (
-            "Provide market decision: 'undecided' or chosen outcome with direction."
+            "Provide a market decision: either say you are 'undecided', or pick a specific outcome and "
+            "indicate whether its price is expected to increase or decrease."
         ),
         "parameters": {
             "type": "object",
             "properties": {
                 "decision": {
                     "type": "string",
-                    "enum": ["undecided", "decided"]
+                    "enum": ["undecided", "decided"],
+                    "description": (
+                        "'undecided' means no clear signal from the news. "
+                        "'decided' means you are confident in a specific outcome and direction."
+                    )
                 },
                 "option": {
                     "type": "string",
-                    "description": "Chosen outcome, e.g., Yes, Team A"
+                    "description": "Which outcome is supported by the news (e.g., 'Yes', 'No', 'Team A')."
                 },
                 "direction": {
                     "type": "string",
                     "enum": ["increase", "decrease"],
-                    "description": "Expected price movement"
+                    "description": "Do you expect this option's price to go up or down?"
                 }
             },
             "required": ["decision"]
@@ -119,59 +125,58 @@ functions = [
     }
 ]
 
-def ask_direction_with_function(payload: dict) -> dict:
+def ask_direction_with_function(payload: Dict[str, Any]) -> Dict[str, Any]:
     """
-    Sends data to GPT-5 Nano using function calling.
-    Returns the structured response.
+    Given a market + related news payload, ask the LLM to choose the likely direction.
     """
-    user_prompt = (
-    "You are an automated Polymarket trading assistant.\n"
-    "\n"
-    "Behavioral rules:\n"
-    "1) Always respond by calling the function 'report_market_direction'. "
-    "   Never output free text.\n"
-    "2) You may choose 'undecided' if signals are weak/ambiguous or you do not "
-    "   expect a significant probability shift. Do not force a decision.\n"
-    "3) If you do decide, choose exactly one existing outcome label from the provided data, "
-    "   and a single direction: 'increase' or 'decrease'.\n"
-    "4) Consider only the provided market snapshot and prompt. Do NOT invent external facts.\n"
-    "5) Prefer caution near market close, on thin liquidity, or when price already implies the view.\n"
-    "6) Ignore style; optimize for correctness and calibration. No chain-of-thought in the output.\n"
-    "\n"
-    "Data schema reminder (input):\n"
-    "{\n"
-    '  \"question\": str,\n'
-    '  \"description\": str,\n'
-    '  \"endDate\": \"YYYY-MM-DD\",\n'
-    '  \"currentDate\": \"YYYY-MM-DD\",\n'
-    '  \"outcomePairs\": [ {\"outcome\": str, \"price\": float}, ... ]\n'
-    "}\n"
-    "\n"
-    "Decision policy (high-level heuristics; not strict rules):\n"
-    "- Price context: extremely low/high prices may be near-saturated; require stronger evidence to predict further move.\n"
-    "- Time context: if endDate is very near and no strong catalyst is implied in the prompt, lean 'undecided'.\n"
-    "- Multi-outcome parity: if outcomes are close and no differentiator is present, lean 'undecided'.\n"
-    "- Binary example: If 'Yes' looks underpriced relative to prompt signals, recommend option='Yes', direction='increase'.\n"
-)
-    messages = [
-        {"role": "system", "content": "Respond only by calling the function."},
-        {"role": "user", "content": json.dumps({
-            "data": payload,
-            "prompt": user_prompt
-        })}
-    ]
+    prompt = f"""
+You are an automated prediction market analyst. Based on the market metadata and news articles, your task is to determine if the market is likely to move due to new information.
 
-    response = client.chat.completions.create(
-        model="gpt-5-nano",
-        messages=messages,
-        functions=functions,
-        function_call={"name": "report_market_direction"},
+Please follow these rules:
+- You may answer 'undecided' if the news is ambiguous, unrelated, or lacks strong signals.
+- If you do decide, choose one clear outcome (from the market's outcome list) and a direction ('increase' or 'decrease').
+- Consider all provided news articles. Your decision should be justifiable by what's in them — do not invent facts.
+
+Market Question:
+{payload['question']}
+
+Market Description:
+{payload.get('description', 'N/A')}
+
+Outcomes and Prices:
+{', '.join(f"{o['outcome']}: {o['price']}" for o in payload.get('outcomePairs', []))}
+
+End Date: {payload.get('endDate')}
+Time to Expiry (days): {payload.get('timeToExpiryDays')}
+24h Volume: {payload.get('volume24h')}
+Spread: {payload.get('spread')}
+Extremeness: {payload.get('extremeness')}
+
+News Articles:
+""" + "\n".join(
+        f"- {a['title']}\n  {a['summary']}" for a in payload.get("related_articles", [])
     )
 
-    msg = response.choices[0].message
-    if msg.function_call:
-        return json.loads(msg.function_call.arguments)
-    return {"decision": "undecided"}
+    # Call OpenAI with function-calling
+    response = client.chat.completions.create(
+        model="gpt-4-1106-preview",  # or your preferred model
+        messages=[
+            {"role": "system", "content": "You are an expert market analyst trained to detect news-driven movement."},
+            {"role": "user", "content": prompt}
+        ],
+        functions=functions,
+        function_call={"name": "report_market_direction"},
+        temperature=0.2,
+    )
+
+    fn_call = response.choices[0].message.function_call
+    if not fn_call or not fn_call.arguments:
+        raise ValueError("Function call failed or missing arguments")
+
+    parsed = json.loads(fn_call.arguments)
+
+    # Always contains at least `decision`
+    return parsed
 
 
 
