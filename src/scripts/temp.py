@@ -11,7 +11,7 @@ import json
 import requests
 from datetime import datetime, timezone
 import ast
-from typing import Any, List, Sequence, Tuple, Dict
+from typing import Any, List, Sequence, Dict
 
 def _parse_list_field(value: Any) -> List[Any]:
     """
@@ -90,11 +90,10 @@ def fetch_and_extract(market_id: str) -> dict:
     spread = abs(prices[0] - prices[1]) if len(prices) >= 2 else 0.0
     extremeness = min(prices) if prices else 0.0
     price_sum = sum(prices)
-    one_day_change = float(m.get("oneDayPriceChange", 0.0))
     volume_24h = float(m.get("volume24hr", 0.0))
 
     return {
-        "news": "pass",
+        "conditionId": market_id,
         "question": m.get("question", ""),
         "description": m.get("description", ""),
         "endDate": end,
@@ -103,9 +102,9 @@ def fetch_and_extract(market_id: str) -> dict:
         "spread": spread,
         "extremeness": extremeness,
         "priceSum": price_sum,
-        "oneDayPriceChange": one_day_change,
         "volume24h": volume_24h,
         "outcomePairs": outcome_pairs,
+        "news": "pass",
     }
 
 if __name__ == "__main__":

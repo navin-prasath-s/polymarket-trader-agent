@@ -179,6 +179,7 @@ def ask_direction_with_function(payload: dict) -> dict:
 if __name__ == "__main__":
     market_id = "0x6728bcaed6aa840074d7da69cddb04d0f8176592ce197a48f314f873a0ac163b"
     payload = fetch_and_extract(market_id)
+    print(payload)
     result = ask_direction_with_function(payload)
     print(json.dumps(result, indent=2))
     # # Example 1 - Should have impact
